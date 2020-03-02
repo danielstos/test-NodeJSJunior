@@ -5,12 +5,13 @@ validação de campos pela interface reactjs
 
 criado no ambiente do sistema windows
 nodeJs 
-modulos intalados 
+modulos instalados 
 
-react
-express
-reactstrap
-bootstrap
+react,
+express,
+reactstrap,
+bootstrap,
+
 comando para iniciar duas aplicações separados
 backend
 npm start
