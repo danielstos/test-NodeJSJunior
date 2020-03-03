@@ -1,20 +1,14 @@
 import React from 'react';
 import './App.css';
 import { Input } from 'reactstrap'
+import InputComponet from './components/InputComponet'
+
 import logo from './img/logo.png';
+import validate from './components/validate'
+import salveFields from './components/salveFields'
 
-const InputComponet = (props) => (
 
-  <>
-    <Input
-      value={props.value}
-      onChange={props.onChange}
-      placeholder={props.placeholder}
-      type={props.type || "text"} />
-    {props.erro && <small>{props.erro}</small>}
 
-  </>
-)
 
 class Formulario extends React.Component {
 
@@ -45,60 +39,18 @@ class Formulario extends React.Component {
   }
 
 
-  salveFields() {
-  
-    const { form } = this.state;
-    return new Promise((resolve, reject) => {
-      fetch(`http://localhost:3000/order`, {
-        method: "post",
-        headers: {
-          "Content-Type": "application/json"
-        },
-        body: JSON.stringify(form)
-      }).then(response => response.json())
-        .then(response => resolve(response))
-        .catch(error => { console.log(error); reject(error); });
-
-    })
-    this.handleSubmit();
-  }
-
-  validate = () => {
-
-    const { form } = this.state;
-    const erros = {};
-    [
-      "firstName",
-      "lastName",
-      "email",
-      "phone",
-      "language",
-      "country",
-      "billingAddress1",
-      "billingCity",
-      "billingState",
-      "shippingAddress1",
-      "shippingCity",
-      "shippingState",
-      "quantity"
-    ].forEach((item) => {
-      if (!form[item]) erros[item] = "Digite o " + item;
-    })
-    this.setState({ erros })
-    return Object.keys(erros).length === 0;
-  }
 
   onChange = (field, ev) => {
     const { form } = this.state;
     form[field] = ev.target.value;
-    this.setState({ form }, () => {
-      this.validate();
-    })
+    this.setState({ form }, (() => {
+      validate(this);
+    }).bind(this))
   }
 
   handleSubmit = () => {
-    if (!this.validate()) return null;
     const { form } = this.state;
+    if (!validate(this)) return null;
     this.props.addNewOrder(form)
   }
 
@@ -107,7 +59,8 @@ class Formulario extends React.Component {
     return (
 
       <div className="Formulario " method="post">
-        <div> <img src={logo} alt="logo" /></div>
+    <div className="container" >
+        <div> <img src={logo} alt="logo" /></div></div>
         <div className="container-fluid" >
           <div className="container" >
 
@@ -186,11 +139,11 @@ class Formulario extends React.Component {
 
                 <InputComponet value={form.billingState}
                   onChange={(ev) => this.onChange('billingState:', ev)}
-                  placeholder={"State:"}  />
+                  placeholder={"State:"} erro={erros.billingState} />
 
                 <InputComponet value={form.billingZipCode}
                   onChange={(ev) => this.onChange('billingZipCode:', ev)}
-                  placeholder={"Zip Code:"} erro={erros.billingState} />
+                  placeholder={"Zip Code:"}  />
 
                 <InputComponet value={form.shippingAddressUse}
                   onChange={(ev) => this.onChange('shippingAddressUse:', ev)}
@@ -216,7 +169,7 @@ class Formulario extends React.Component {
 
                 <InputComponet value={form.shippingState}
                   onChange={(ev) => this.onChange('shippingState:', ev)}
-                  placeholder={"State:"}  />
+                  placeholder={"State:"}  erro={erros.shippingState}/>
 
                 <InputComponet value={form.shippingZipCode}
                   onChange={(ev) => this.onChange('shippingZipCode:', ev)}
@@ -247,13 +200,13 @@ class Formulario extends React.Component {
               </div>
           
             </div>
-
-          </div>
-          <button onClick={() => {
-            this.salveFields().then(response => {
+            <button onClick={() => {
+            salveFields(this).then(response => {
               if (response.statusCode === 400) alert(response.message);
             });
           }}> Order Now </button>
+          </div>
+    
       </div>
          
         </div>

@@ -20,6 +20,8 @@ router.post('/', function(req, res, next) {
         'quantity',
         'shippingCity',
         'shippingState',
+         "language",
+         "country",
 
       ].forEach(fieldName => {
         if (formData[fieldName] == null || formData[fieldName] == '') {
@@ -29,17 +31,17 @@ router.post('/', function(req, res, next) {
       if (!/\@/.test(formData.email)) {
         messageError.push(`Email is invalid`);
       }
-      if (formData.zipcode.length > 6) {
+      if (formData.zipcode && formData.zipcode.length > 6) {
         messageError.push(`zip is invalid`);
       }
-      if (formData.shippingCity.length > 3) {
+      if (formData.shippingCity && formData.shippingCity.length > 3) {
         messageError.push(`City is invalid`);
       }
-      if (formData.shippingState.length >= 2) {
+      if (formData.shippingState && formData.shippingState.length >= 2) {
         messageError.push(`State is invalid`);
       }
 
-      if (messageError.length > 0) {
+      if (messageError.length && messageError.length > 0) {
           throw new Error(messageError.join('\n'));
       }
       //nessa linha esta salvando o ordem
